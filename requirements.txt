@@ -1,0 +1,14 @@
+langchain-experimental
+langchain-openai
+python-dotenv
+langchain-core
+langchain-community
+langchain-mcp-adapters
+langgraph
+requests
+typing-extensions
+pandas
+flask
+flask_cors
+numpy
+langchain-core
