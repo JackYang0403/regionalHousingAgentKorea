@@ -2,15 +2,12 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 from typing import Dict, Any
-
-# from main import graph  # your full code above is in this file
 from langgraph.checkpoint.memory import MemorySaver
 import uuid
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-# from main import graph
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
 from main import jeonse_agent_tool, home_agent_tool, generate_chart_tool, build_agent_graph, create_csv_file_tool
@@ -85,12 +82,12 @@ def download_file(filename):
 def serve_index():
     return send_from_directory("frontend", "index.html")
 
-# Serve any other frontend static files (JS, CSS, images, etc.)
+# Serve any other frontend static files 
 @app.route("/<path:path>")
 def serve_static(path):
     return send_from_directory("frontend", path)
 
-# Your existing chat endpoint for POST requests
+# existing chat endpoint for POST requests
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()

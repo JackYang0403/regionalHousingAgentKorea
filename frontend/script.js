@@ -46,7 +46,7 @@ class ChatApp {
             formData.append('file', file);
 
             try {
-            // send to your Flask server
+            // send to Flask server
             const res = await fetch('/upload', {
                 method: 'POST',
                 body: formData
@@ -188,7 +188,6 @@ class ChatApp {
           urlRegex,
           '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
         );
-        // …and convert our CSV‐download endpoints to links
         content = content.replace(
           /(\/download\/[\w\-\_]+\.csv)/g,
           '<a href="$1" target="_blank" download>$1</a>'

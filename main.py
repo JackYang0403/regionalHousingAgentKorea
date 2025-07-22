@@ -20,12 +20,7 @@ import json
 import numpy as np
 import pandas as pd
 from langchain.agents.agent_types import AgentType
-# from langchain.agents.tools import PythonREPLTool
 from langchain_openai import ChatOpenAI
-# from langchain_tavily import TavilySearch
-# from langchain.agents import initialize_agent
-# from langchain.agents.agent_types import AgentType
-# from langchain_google_genai import ChatGoogleGenerativeAI
 import uuid
 import os
 from io import StringIO
@@ -34,16 +29,12 @@ from io import StringIO
 ## install MCP chart server, npm install -g @antv/mcp-server-chart
 ## run MCP chart server, mcp-server-chart --transport sse
 from openai import OpenAI
-# client = OpenAI(organization='org-i2STtwjy5ry6uU1mCnby4Ny8')
 class State(TypedDict):
 
     messages:Annotated[list,add_messages]
 
 
 load_dotenv()
-# openai_key = os.getenv("OPENAI_API_KEY")
-# llm = ChatOpenAI(api_key=openai_key, model="gpt-4o-mini", organization='org-i2STtwjy5ry6uU1mCnby4Ny8')
-
 llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4.1-mini")
 
 
@@ -178,8 +169,6 @@ home_agent_tool = home_agent.as_tool(
     ''',
 )
 
-# pyrepl = PythonREPLTool()
-# search = TavilySearch(max_results=1)
 
 # # human-in-the-loop intervention
 # human_assistant = HumanInputRun(
@@ -191,10 +180,6 @@ home_agent_tool = home_agent.as_tool(
 #     """
 # )
 
-# edit_agent = initialize_agent(
-#     tools = [pyrepl, human_assistant, search]
-    
-# )
 
 ## MCP chart generation tool Wrapper 
 @tool(
@@ -288,7 +273,7 @@ def build_agent_graph(tools, memory):
 # config = {"configurable":{"thread_id":"1"}}
 # memory = MemorySaver()
 # graph = build_agent_graph(tools, memory)
-# response = graph.invoke({"messages": "give me a csv file of just seoul jeonse data in 2024 "}, config=config)
+# response = graph.invoke({"messages": "give me a csv file of just seoul jeonse data in 2024 for apartments "}, config=config)
 
 # #response = graph.invoke({"messages": "give me a chart use the generate chart tool. x axis is letter, y axis is number. x is [a , b , c]. y axis  is [1 , 2 , 3]. title is abcChart. and chart type is a graph  "}, config=config)
 # for m in response['messages']:
