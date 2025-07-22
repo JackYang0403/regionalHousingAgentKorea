@@ -5,7 +5,7 @@ class ChatApp {
         this.sendButton = document.getElementById('sendButton');
         this.loadingIndicator = document.getElementById('loadingIndicator');
         this.typingIndicator = document.getElementById('typingIndicator');
-        this.selectedNeighborhood = null;
+        this.selectedRegion = null;
         this.isProcessing = false;
         this.messageHistory = [];
         
@@ -31,10 +31,45 @@ class ChatApp {
         window.addEventListener('load', () => {
             this.messageInput.focus();
         });
+
+// script.js
+
+// wait until the DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+        const csvInput = document.getElementById('csvUpload');
+        csvInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;                            // user canceled
+
+            // package it for upload
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+            // send to your Flask server
+            const res = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Upload error:', text);
+                alert('CSV upload failed: ' + text);
+            } else {
+                alert('CSV uploaded! You can now ask questions about it.');
+            }
+            } catch (err) {
+            console.error('Network error:', err);
+            alert('Could not reach the server.');
+            }
+        });
+    });
+
     }
 
-    setNeighborhood(name) {
-        this.selectedNeighborhood = name;
+    setRegion(name) {
+        this.selectedRegion = name;
     }
 
     autoResizeTextarea() {
@@ -70,7 +105,7 @@ class ChatApp {
                 },
                 body: JSON.stringify({ 
                     message: message, 
-                    neighborhood: this.selectedNeighborhood 
+                    Region: this.selectedRegion 
                 })
             });
 
@@ -159,6 +194,7 @@ class ChatApp {
         
         return content;
     }
+    
 
     showTypingIndicator() {
         this.typingIndicator.style.display = 'flex';

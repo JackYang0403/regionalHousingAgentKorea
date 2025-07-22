@@ -12,3 +12,4 @@ flask
 flask_cors
 numpy
 langchain-core
+langchain-google-genai

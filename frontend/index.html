@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYC Neighborhood Helper</title>
+    <title>Korea Region Guide</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
@@ -256,8 +256,8 @@
     <div class="chat-container">
         <div class="chat-header">
             <div>
-                <h1>My Neighborhood Helper</h1>
-                <p>Ask about NYC housing, rent, sales, and more.</p>
+                <h1>Korea Region Guide</h1>
+                <p>Ask about Korea's housing, rent, sales, and more.</p>
             </div>
             <button id="clearChatBtn" class="clear-button" onclick="clearChat()" title="Clear chat history">
                 🗑️
@@ -266,7 +266,7 @@
         <div class="messages-container" id="messagesContainer">
             <div class="empty-state">
                 <h3>Welcome!</h3>
-                <p>Ask about NYC neighborhoods, rent, home prices, or mortgage calculations.<br>Example: "Median rent in Bensonhurst in 2023"</p>
+                <p>Ask me about the Housing Economy of Korea's Administrative Regions.<br>Example: "[Seoul] list the Jeoson price index of Scale 1 apartment during 2024"</p>
             </div>
         </div>
         <div class="typing-indicator" id="typingIndicator">
@@ -277,6 +277,10 @@
                 <span class="typing-dot"></span>
             </div>
         </div>
+        <label for="csvUpload" style="margin: 12px;">
+            📂 Upload CSV:
+            <input type="file" id="csvUpload" accept=".csv" />
+        </label>
         <div class="input-container">
             <div class="input-wrapper">
                 <textarea 
@@ -299,24 +303,24 @@
     <script src="script.js"></script>
     <script>
       // Initialize the map
-      const map = L.map('map').setView([40.7128, -74.0060], 11);
+      const map = L.map('map').setView([36.5, 127.8], 6.15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
       // Load the GeoJSON file
-      fetch('nyc_neighborhoods.geojson')
+      fetch('kr.json')
         .then(res => res.json())
         .then(data => {
           L.geoJSON(data, {
             onEachFeature: (feature, layer) => {
               layer.on('click', function () {
-                const selectedNeighborhood = feature.properties.ntaname || feature.properties.name || 'Unknown';
+                const selectedRegion = feature.properties.ntaname || feature.properties.name || 'Unknown';
                 const msgDiv = document.getElementById('selectedMessage');
-                msgDiv.textContent = `Selected neighborhood: ${selectedNeighborhood}`;
+                msgDiv.textContent = `Selected Provience: ${selectedRegion}`;
                 msgDiv.style.display = 'block';
                 const chatInput = document.getElementById('messageInput');
-                if (chatInput && !chatInput.value.toLowerCase().includes(selectedNeighborhood.toLowerCase())) {
-                    chatInput.value = `[${selectedNeighborhood}] `;
+                if (chatInput && !chatInput.value.toLowerCase().includes(selectedRegion.toLowerCase())) {
+                    chatInput.value = `[${selectedRegion}] `;
                     chatInput.focus();
                 }
               });
