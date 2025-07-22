@@ -229,12 +229,6 @@ class ChatApp {
         this.messagesContainer.innerHTML = `
             <div class="empty-state">
                 <h3>👋 Welcome!</h3>
-                <p>I can help you analyze NYC housing market data, compare rent vs buy scenarios, calculate mortgage payments, and generate charts. Try asking me something like:</p>
-                <p style="margin-top: 15px; font-style: italic;">
-                    "What's the median rent in Brooklyn in 2023?"<br>
-                    "Compare home prices in Manhattan vs Queens"<br>
-                    "Calculate monthly mortgage for a $500k home with 20% down"
-                </p>
             </div>
         `;
         this.messageHistory = [];
