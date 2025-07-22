@@ -26,6 +26,9 @@ from langchain_openai import ChatOpenAI
 # from langchain.agents import initialize_agent
 # from langchain.agents.agent_types import AgentType
 # from langchain_google_genai import ChatGoogleGenerativeAI
+import uuid
+import os
+from io import StringIO
 
 
 ## install MCP chart server, npm install -g @antv/mcp-server-chart
@@ -42,6 +45,11 @@ load_dotenv()
 # llm = ChatOpenAI(api_key=openai_key, model="gpt-4o-mini", organization='org-i2STtwjy5ry6uU1mCnby4Ny8')
 
 llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4.1-mini")
+
+
+UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 ## Setup MCP chart
 ## Global cache of MCP client and agent to avoid reconnecting every call
@@ -201,13 +209,47 @@ def generate_chart_tool(chart_config: Union[str, dict]) -> str:
     return asyncio.run(async_generate_chart(chart_config))
 
 
-
+@tool(
+    description='''
+Creates a new CSV from provided JSON data or raw CSV text. 
+        Input: a JSON string with keys 'data' (list of objects) or 'csv_string' (CSV text), 
+        and optional 'filename'. 
+        Returns the relative download URL.
+'''
+        
+)
+def create_csv_file_tool(payload: str) -> str:
+    """
+    payload JSON schema:
+      { 
+        "data": [ {col: val, ...}, ... ] or
+        "csv_string": "col1,col2\nv1,v2\n...",
+        "filename": "my_output.csv"  (optional)
+      }
+    """
+    # parse
+    obj = __import__("json").loads(payload)
+    # choose filename
+    fname = obj.get("filename") or f"output_{uuid.uuid4().hex}.csv"
+    # build dataframe
+    if "data" in obj:
+        df = pd.DataFrame(obj["data"])
+    elif "csv_string" in obj:
+        df = pd.read_csv(StringIO(obj["csv_string"]))
+    else:
+        raise ValueError("Must provide either 'data' or 'csv_string'")
+    # write out
+    out_path = os.path.join(UPLOAD_DIR, fname)
+    df.to_csv(out_path, index=False)
+    # return the download endpoint (served by app.py)
+    return f"/download/{fname}"
 
 
 
 tools = [jeonse_agent_tool, 
         home_agent_tool, 
-        generate_chart_tool]
+        generate_chart_tool,
+        create_csv_file_tool]
     
 def build_agent_graph(tools, memory):
 
@@ -243,32 +285,12 @@ def build_agent_graph(tools, memory):
 
 
 
-
-# ## test 
-# # response = graph.invoke({'messages': 'list the median sale prices of a one family home in Bensonhurst every year from 2015 to 2022'}, config=config)
-# # response = graph.invoke({'messages': 'Make a chart or graph for the sale prices '}, config=config)
-# # # # response = graph.invoke({'messages': 'generate a different type of chart of graph for the same data '}, config=config)
-# # # # response = graph.invoke({'messages': 'What would be the monthly payment on the house be with a 30 year mortgage?'}, config=config)
-# # # # print(response['messages'][-1].content)
-
-# for m in response['messages']:
-#     m.pretty_print()
-
-# user ID
-
-
 # config = {"configurable":{"thread_id":"1"}}
 # memory = MemorySaver()
 # graph = build_agent_graph(tools, memory)
-# response = graph.invoke({"messages": "generate a chart for the change rent price index of a scale 1 apartment in Gyeonggi "}, config=config)
-# response = graph.invoke({"messages": "provide the link "}, config=config)
+# response = graph.invoke({"messages": "give me a csv file of just seoul jeonse data in 2024 "}, config=config)
+
 # #response = graph.invoke({"messages": "give me a chart use the generate chart tool. x axis is letter, y axis is number. x is [a , b , c]. y axis  is [1 , 2 , 3]. title is abcChart. and chart type is a graph  "}, config=config)
 # for m in response['messages']:
 #      m.pretty_print()
 
-
-# messages = [m.content for m in response['messages']]
-# print(messages)
-
-#[Jeonbuk] list Jeoson price change of scale 1 apartment in Seoul during 2024
-#graph the data

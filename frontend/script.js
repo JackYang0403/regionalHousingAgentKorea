@@ -182,15 +182,17 @@ class ChatApp {
     }
 
     formatMessage(content) {
-        // Convert URLs to clickable links
+        // Convert absolute URLs…
         const urlRegex = /(https?:\/\/[^\s]+)/g;
-        content = content.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-        
-        // Convert line breaks to <br> tags
-        content = content.replace(/\n/g, '<br>');
-        
-        // Highlight code blocks (simple implementation)
-        content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+        content = content.replace(
+          urlRegex,
+          '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+        );
+        // …and convert our CSV‐download endpoints to links
+        content = content.replace(
+          /(\/download\/[\w\-\_]+\.csv)/g,
+          '<a href="$1" target="_blank" download>$1</a>'
+        );
         
         return content;
     }
